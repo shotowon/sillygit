@@ -16,7 +16,7 @@ pub enum ObjectFile {
 }
 
 impl ObjectFile {
-    pub fn new(object: &str) -> Result<Self, Box<dyn error::Error>> {
+    pub fn read(object: &str) -> Result<Self, Box<dyn error::Error>> {
             let filepath = &format!(
                 "{}/objects/{}/{}",
                 REPO_DIRECTORY,

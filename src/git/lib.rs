@@ -17,7 +17,7 @@ pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn error::Error
     // to match tuple
     match pretty {
         true => {
-            let object = object::ObjectFile::new(&object)?;
+            let object = object::ObjectFile::read(&object)?;
             match object {
                 object::ObjectFile::Blob { content, .. } => {
                     print!("{}", content);
