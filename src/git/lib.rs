@@ -1,7 +1,8 @@
 use std::fs;
 use std::io::Error;
 
-pub fn cat_file(pretty: bool, object: String) { 
+pub fn cat_file(pretty: bool, object: String) -> Result((), Error) { 
+    Ok(())
 }
 
 pub fn init() -> Result<(), Error> {
