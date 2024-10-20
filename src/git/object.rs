@@ -9,7 +9,6 @@ use crate::git::common::{Error, decode_from_file};
 
 pub enum ObjectFile {
     Blob {
-        name: String,
         header: String,
         content: String,
     },
@@ -33,7 +32,6 @@ impl ObjectFile {
                 let header = contents[0];
                 return Ok(
                     ObjectFile::Blob {
-                        name: object.to_string(),
                         header: header.to_string(), 
                         content: contents[1].to_string(),
                     }
