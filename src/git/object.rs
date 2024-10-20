@@ -1,4 +1,5 @@
 use std::{
+    io::prelude::*,
     fs::File,
     path::Path,
     error,
@@ -39,5 +40,27 @@ impl ObjectFile {
             }
             
             Err(Box::new(Error::new("failed to identify object")))
+    }
+
+    pub fn blob_from_file(filepath: &str) -> Result<
+        Self,
+        Box<dyn error::Error>
+            > {
+        let filepath = Path::new(filepath);
+        let mut file = File::open(filepath)?;
+        let metadata = file.metadata()?;
+        if !metadata.is_file() {
+            return Err(
+                Box::new(
+                    Error::new("not a file")
+                    )
+                );
+        }
+
+        let size = metadata.len();
+        let mut content = String::new();
+        file.read_to_string(&mut content)?;
+
+        Ok(ObjectFile::Blob { header: format!("blob {}", size), content })
     }
 }
