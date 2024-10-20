@@ -6,5 +6,5 @@ use tinygit::git;
 
 fn main() {
     let query = Query::parse();
-    git::run(query);
+    git::run(query).unwrap();
 }
