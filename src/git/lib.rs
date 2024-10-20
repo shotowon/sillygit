@@ -1,12 +1,11 @@
 use std::fs;
 use std::path::Path;
 use std::io;
-use std::io::prelude::*;
 use std::error::Error;
 
 const REPO_DIRECTORY: &'static str = ".git";
 
-use flate2::read::ZlibDecoder;
+use crate::git::common;
 
 pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> { 
     match pretty {
@@ -19,14 +18,11 @@ pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> {
             );
             let file = Path::new(&filepath);
             let file = fs::File::open(&file)?;
-            let mut d = ZlibDecoder::new(file);
-            let mut buf = String::new();
-            d.read_to_string(&mut buf)?;
+            let contents = common::decode_from_file(&file)?;
+            let contents: Vec<&str> = contents.split('\0').collect();
+            let contents = contents[1];
 
-            let buf: Vec<&str> = buf.split('\0').collect();
-            let buf = buf[1];
-
-            println!("{}", buf);
+            print!("{}", contents);
             Ok(())
         },
         _ => Err(Box::new(io::Error::new(io::ErrorKind::InvalidInput, "cat file mod is not specified"))),

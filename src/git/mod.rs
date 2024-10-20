@@ -3,6 +3,7 @@ use crate::cli_parser::{Query, Commands};
 use std::error::Error;
 
 mod lib;
+mod common;
 
 pub fn run(query: Query) -> Result<(), Box<dyn Error>> {
     match query.command {
