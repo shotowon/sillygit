@@ -3,9 +3,8 @@ use std::path::Path;
 use std::io;
 use std::error::Error;
 
-const REPO_DIRECTORY: &'static str = ".git";
-
 use crate::git::common;
+use crate::git::consts::REPO_DIRECTORY;
 
 pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> { 
     match pretty {
