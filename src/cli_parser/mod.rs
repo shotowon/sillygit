@@ -17,5 +17,6 @@ pub enum Commands {
         // object
         #[arg(required = true)]
         object: String,
-    }
+    },
+    Init,
 }

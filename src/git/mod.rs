@@ -7,6 +7,8 @@ pub fn run(query: Query) -> Result<(), String> {
         Commands::CatFile { pretty, object }  => {
             lib::cat_file(pretty, object);
         },
+        Commands::Init => {
+        },
     }
 
     Ok(())
