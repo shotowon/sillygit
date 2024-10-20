@@ -1,34 +1,40 @@
-use std::fs;
-use std::path::Path;
-use std::io;
-use std::error::Error;
+use std::{
+    fs,
+    error,
+    path::Path,
+};
 
-use crate::git::common;
-use crate::git::consts::REPO_DIRECTORY;
+use crate::git::{
+    object,
+    common::Error,
+    consts::REPO_DIRECTORY,
+};
 
-pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> { 
+pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn error::Error>> { 
+
+    // there will be more flags
+    // so I used match instead of if
+    // to match tuple
     match pretty {
         true => {
-            let filepath = &format!(
-                "{}/objects/{}/{}",
-                REPO_DIRECTORY,
-                &object[..2],
-                &object[2..]
-            );
-            let file = Path::new(&filepath);
-            let file = fs::File::open(&file)?;
-            let contents = common::decode_from_file(&file)?;
-            let contents: Vec<&str> = contents.split('\0').collect();
-            let contents = contents[1];
-
-            print!("{}", contents);
-            Ok(())
+            let object = object::ObjectFile::new(&object)?;
+            match object {
+                object::ObjectFile::Blob { content, .. } => {
+                    print!("{}", content);
+                    Ok(())
+                }
+            }
         },
-        _ => Err(Box::new(io::Error::new(io::ErrorKind::InvalidInput, "cat file mod is not specified"))),
+
+        _ => Err(
+            Box::new(
+                Error::new("cat file mod is not specified")
+                )
+            ),
     }
 }
 
-pub fn init() -> Result<(), Box<dyn Error>> {
+pub fn init() -> Result<(), Box<dyn error::Error>> {
     fs::create_dir(REPO_DIRECTORY)?;
     fs::create_dir(
             Path::new(&format!("{}/objects", REPO_DIRECTORY))
