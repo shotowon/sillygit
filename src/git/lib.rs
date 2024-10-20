@@ -1,15 +1,19 @@
 use std::fs;
 use std::path;
-use std::io::{Error, ErrorKind};
+use std::io;
 use std::io::prelude::*;
+use std::error::Error;
+
+const REPO_DIRECTORY: &'static str = ".git";
 
 use flate2::read::ZlibDecoder;
 
-pub fn cat_file(pretty: bool, object: String) -> Result<(), Error> { 
+pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> { 
     match pretty {
         true => {
             let filepath = &format!(
-                ".git/objects/{}/{}",
+                "{}/objects/{}/{}",
+                REPO_DIRECTORY,
                 &object[..2],
                 &object[2..]
             );
@@ -25,15 +29,15 @@ pub fn cat_file(pretty: bool, object: String) -> Result<(), Error> {
             println!("{}", buf);
             Ok(())
         },
-        _ => Err(Error::new(ErrorKind::InvalidInput, "cat file mod is not specified")),
+        _ => Err(Box::new(io::Error::new(io::ErrorKind::InvalidInput, "cat file mod is not specified"))),
     }
 }
 
-pub fn init() -> Result<(), Error> {
-    fs::create_dir(".tinygit")?;
-    fs::create_dir(".tinygit/objects")?;
-    fs::create_dir(".tinygit/refs")?;
-    fs::write(".tinygit/HEAD", "ref: refs/heads/main\n")?;
+pub fn init() -> Result<(), Box<dyn Error>> {
+    fs::create_dir(REPO_DIRECTORY)?;
+    fs::create_dir(format!("{}/objects", REPO_DIRECTORY))?;
+    fs::create_dir(format!("{}/refs", REPO_DIRECTORY))?;
+    fs::write(format!("{}/HEAD", REPO_DIRECTORY), "ref: refs/heads/main\n")?;
     println!("Initialized git directory");
     Ok(())
 }
