@@ -1,5 +1,5 @@
 use std::fs;
-use std::path;
+use std::path::Path;
 use std::io;
 use std::io::prelude::*;
 use std::error::Error;
@@ -17,7 +17,7 @@ pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> {
                 &object[..2],
                 &object[2..]
             );
-            let file = path::Path::new(&filepath);
+            let file = Path::new(&filepath);
             let file = fs::File::open(&file)?;
             let mut d = ZlibDecoder::new(file);
             let mut buf = String::new();
@@ -35,9 +35,16 @@ pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn Error>> {
 
 pub fn init() -> Result<(), Box<dyn Error>> {
     fs::create_dir(REPO_DIRECTORY)?;
-    fs::create_dir(format!("{}/objects", REPO_DIRECTORY))?;
-    fs::create_dir(format!("{}/refs", REPO_DIRECTORY))?;
-    fs::write(format!("{}/HEAD", REPO_DIRECTORY), "ref: refs/heads/main\n")?;
+    fs::create_dir(
+            Path::new(&format!("{}/objects", REPO_DIRECTORY))
+        )?;
+    fs::create_dir(
+            Path::new(&format!("{}/refs", REPO_DIRECTORY))
+        )?;
+    fs::write(
+            Path::new(&format!("{}/HEAD", REPO_DIRECTORY)), 
+            "ref: refs/heads/main\n"
+        )?;
     println!("Initialized git directory");
     Ok(())
 }
