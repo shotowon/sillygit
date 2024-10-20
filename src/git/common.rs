@@ -12,9 +12,9 @@ pub struct Error {
 }
 
 impl Error {
-    fn new(details: String) -> Self {
+    pub fn new(details: &str) -> Self {
         Error {
-            details: details,
+            details: details.to_string(),
         }
     }
 }
