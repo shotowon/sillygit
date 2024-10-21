@@ -18,5 +18,12 @@ pub enum Commands {
         #[arg(required = true)]
         object: String,
     },
+    HashObject {
+        #[arg(short, long)]
+        write: bool,
+
+        #[arg(required = true)]
+        object: String,
+    },
     Init,
 }
