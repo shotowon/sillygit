@@ -23,7 +23,7 @@ pub enum Commands {
         write: bool,
 
         #[arg(required = true)]
-        object: String,
+        filepath: String,
     },
     Init,
 }
