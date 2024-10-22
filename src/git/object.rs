@@ -62,4 +62,20 @@ impl ObjectFile {
 
         Ok(ObjectFile::Blob { header: format!("blob {}", size), content })
     }
+
+    pub fn as_compressed_bytes(&self) -> Result<Vec<u8>, Box<dyn Error>> {
+        if let ObjectFile::Blob { header, content } = self {
+                let content_to_compress = format!("{}\0{}", header, content);
+                let mut e = ZlibEncoder::new(
+                    Vec::new(),
+                    Compression::default()
+                    );
+
+                e.write_all(content_to_compress.as_bytes())?;
+                let compressed = e.finish()?;
+                return Ok(compressed);
+        }
+
+        Err(Box::from("Object is not a blob"))
+    }
 }
