@@ -2,11 +2,14 @@ use std::{
     io::prelude::*,
     fs::File,
     path::Path,
-    error,
+    error::Error,
 };
 
+use flate2::write::ZlibEncoder;
+use flate2::Compression;
+
 use crate::git::consts::REPO_DIRECTORY;
-use crate::git::common::{Error, decode_from_file};
+use crate::git::common::decode_from_file;
 
 pub enum ObjectFile {
     Blob {
@@ -16,7 +19,7 @@ pub enum ObjectFile {
 }
 
 impl ObjectFile {
-    pub fn read(object: &str) -> Result<Self, Box<dyn error::Error>> {
+    pub fn read(object: &str) -> Result<Self, Box<dyn Error>> {
             let filepath = &format!(
                 "{}/objects/{}/{}",
                 REPO_DIRECTORY,
@@ -39,22 +42,18 @@ impl ObjectFile {
                 )
             }
             
-            Err(Box::new(Error::new("failed to identify object")))
+            Err(Box::from("failed to identify object"))
     }
 
     pub fn blob_from_file(filepath: &str) -> Result<
         Self,
-        Box<dyn error::Error>
+        Box<dyn Error>
             > {
         let filepath = Path::new(filepath);
         let mut file = File::open(filepath)?;
         let metadata = file.metadata()?;
         if !metadata.is_file() {
-            return Err(
-                Box::new(
-                    Error::new("not a file")
-                    )
-                );
+            return Err(Box::from("not a file"));
         }
 
         let size = metadata.len();
