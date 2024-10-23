@@ -7,6 +7,7 @@ use std::{
 
 use flate2::write::ZlibEncoder;
 use flate2::Compression;
+use sha1::{Sha1, Digest};
 
 use crate::git::consts::REPO_DIRECTORY;
 use crate::git::common::decode_from_file;
@@ -74,6 +75,18 @@ impl ObjectFile {
                 e.write_all(content_to_compress.as_bytes())?;
                 let compressed = e.finish()?;
                 return Ok(compressed);
+        }
+
+        Err(Box::from("Object is not a blob"))
+    }
+
+    pub fn blob_as_hex_hash(&self) -> Result<String, Box<dyn Error>> {
+        if let ObjectFile::Blob { header, content } = self {
+                let content_to_compress = format!("{}\0{}", header, content);
+                let mut hasher = Sha1::new();
+                hasher.update(content_to_compress.as_bytes());
+                let result = hasher.finalize();
+                return Ok(format!("{:x}", result));
         }
 
         Err(Box::from("Object is not a blob"))
