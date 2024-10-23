@@ -1,6 +1,6 @@
 use std::{
     io::prelude::*,
-    fs::File,
+    fs,
     path::Path,
     error::Error,
 };
@@ -29,7 +29,7 @@ impl ObjectFile {
             );
 
             let file = Path::new(&filepath);
-            let file = File::open(&file)?;
+            let file = fs::File::open(&file)?;
             let contents = decode_from_file(&file)?;
 
             if contents.starts_with("blob") {
@@ -51,7 +51,7 @@ impl ObjectFile {
         Box<dyn Error>
             > {
         let filepath = Path::new(filepath);
-        let mut file = File::open(filepath)?;
+        let mut file = fs::File::open(filepath)?;
         let metadata = file.metadata()?;
         if !metadata.is_file() {
             return Err(Box::from("not a file"));
@@ -73,7 +73,7 @@ impl ObjectFile {
                     );
 
                 e.write_all(content_to_compress.as_bytes())?;
-                let compressed = e.finish()?;
+                let compressed = e.finish()?.to_vec();
                 return Ok(compressed);
         }
 
@@ -90,5 +90,23 @@ impl ObjectFile {
         }
 
         Err(Box::from("Object is not a blob"))
+    }
+
+    pub fn hash_write(&self) -> Result<(), Box<dyn Error>> {
+        let hash = self.blob_as_hex_hash()?;
+        let content = self.as_compressed_bytes()?;
+        
+        let folder_path = format!("./{}/objects/{}", REPO_DIRECTORY, &hash[..2]);
+
+        if !Path::new(&folder_path).exists() {
+            fs::create_dir_all(&folder_path)?;
+        }
+        
+        let object_file_path = Path::new(&folder_path).join(&hash[2..]);
+        let mut file = fs::File::create(object_file_path)?;
+        file.write_all(&content[..])?;
+        println!("{}", hash);
+        
+        Ok(())
     }
 }
