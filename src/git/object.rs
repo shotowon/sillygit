@@ -82,9 +82,9 @@ impl ObjectFile {
 
     pub fn blob_as_hex_hash(&self) -> Result<String, Box<dyn Error>> {
         if let ObjectFile::Blob { header, content } = self {
-                let content_to_compress = format!("{}\0{}", header, content);
+                let content_to_hash = format!("{}\0{}", header, content);
                 let mut hasher = Sha1::new();
-                hasher.update(content_to_compress.as_bytes());
+                hasher.update(content_to_hash.as_bytes());
                 let result = hasher.finalize();
                 return Ok(format!("{:x}", result));
         }
