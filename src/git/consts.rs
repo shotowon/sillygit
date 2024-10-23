@@ -1,1 +1,1 @@
-pub const REPO_DIRECTORY: &'static str = ".git";
+pub const REPO_DIRECTORY: &'static str = ".sillygit";

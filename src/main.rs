@@ -1,8 +1,8 @@
 #![allow(unused)]
-extern crate tinygit;
+extern crate sillygit;
 use clap::Parser;
-use tinygit::cli_parser::Query;
-use tinygit::git;
+use sillygit::cli_parser::Query;
+use sillygit::git;
 
 fn main() {
     let query = Query::parse();
