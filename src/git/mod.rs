@@ -11,6 +11,7 @@ pub fn run(query: Query) -> Result<(), Box<dyn Error>> {
     match query.command {
         Commands::CatFile { pretty, object } => lib::cat_file(pretty, object)?,
         Commands::Init => lib::init()?,
+        Commands::HashObject { write, filepath } => lib::hash_object(write, filepath)?,
     }
 
     Ok(())

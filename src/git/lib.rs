@@ -6,7 +6,6 @@ use std::{
 
 use crate::git::{
     object,
-    common::Error,
     consts::REPO_DIRECTORY,
 };
 
@@ -26,11 +25,7 @@ pub fn cat_file(pretty: bool, object: String) -> Result<(), Box<dyn error::Error
             }
         },
 
-        _ => Err(
-            Box::new(
-                Error::new("cat file mod is not specified")
-                )
-            ),
+        _ => Err(Box::from("cat file mod is not specified")),
     }
 }
 
@@ -48,4 +43,17 @@ pub fn init() -> Result<(), Box<dyn error::Error>> {
         )?;
     println!("Initialized git directory");
     Ok(())
+}
+
+pub fn hash_object(write: bool, path: String) -> Result<(), Box<dyn error::Error>> {
+    match (write,) {
+        (true,) => {
+            let blob = object::ObjectFile::blob_from_file(&path)?;
+            blob.hash_write()?;
+            Ok(())
+        }
+        _ => {
+            Err(Box::from("TODO: hash-object somerror"))
+        }
+    }
 }
