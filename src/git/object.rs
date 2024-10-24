@@ -120,6 +120,10 @@ impl Object {
     pub fn content<'a>(&'a self) -> &'a str {
         &self.content
     }
+    
+    fn to_object_content(&self) -> String {
+        format!("{} {}\0{}", self.kind.to_str(), self.size, self.content)
+    }
 }
 
 pub enum ObjectFile {
