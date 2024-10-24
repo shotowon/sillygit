@@ -12,6 +12,17 @@ use sha1::{Sha1, Digest};
 use crate::git::consts::REPO_DIRECTORY;
 use crate::git::common::decode_from_file;
 
+pub enum ObjectKind {
+    Blob,
+    Tree,
+}
+
+pub struct Object {
+    pub kind: ObjectKind,
+    size: usize,
+    content: String,
+}
+
 pub enum ObjectFile {
     Blob {
         header: String,
