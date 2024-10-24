@@ -53,6 +53,22 @@ impl Object {
         
         Ok(Object { kind, size, content })
     }
+    fn path_from_sha(sha: &str) -> Result<PathBuf, Box<dyn Error>> { 
+        if sha.len() != 40 {
+            return Err(Box::from("error: invalid sha"));
+        }
+
+        let (folder, file) = sha.split_at(2);
+        let mut path = PathBuf::new();
+
+        path.push(&format!("{}/objects/{}/{}",
+                    REPO_DIRECTORY,
+                    folder,
+                    file
+                    )
+                );
+        Ok(path)
+    }
 }
 
 pub enum ObjectFile {
