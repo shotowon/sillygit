@@ -47,7 +47,7 @@ impl ObjectKind {
 
 pub struct Object {
     pub kind: ObjectKind,
-    size: usize,
+    size: u64,
     content: String,
 }
 
@@ -70,7 +70,7 @@ impl Object {
         let (object_type, size) = header.split_at(space_pos);
         let size = &size[1..];
 
-        let size: usize = size.parse()?;
+        let size: u64 = size.parse()?;
         let kind = ObjectKind::from_str(object_type)?;
         let content = content.to_string();
         
