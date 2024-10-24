@@ -117,6 +117,25 @@ impl Object {
         Ok(buf)
     }
 
+    pub fn encode_and_write(&self, sha: &str) -> Result<(), Box<dyn Error>> {
+        let path = Self::path_from_sha(sha)?;
+        let content = self.to_object_content();
+
+        let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
+        e.write_all(content.as_bytes())?;
+        let compressed = e.finish()?;
+
+        let dir = path.parent().ok_or("invalid path")?;
+        if !dir.exists() {
+            fs::create_dir_all(dir);
+        }
+        
+        let mut file = fs::File::create(path)?;
+        file.write_all(&compressed)?;
+        
+        Ok(()) 
+    }
+
     pub fn content<'a>(&'a self) -> &'a str {
         &self.content
     }
