@@ -25,5 +25,12 @@ pub enum Commands {
         #[arg(required = true)]
         filepath: String,
     },
+    LsTree {
+        #[arg(long)]
+        name_only: bool,
+
+        #[arg(required = true)]
+        tree_sha: String,
+    },
     Init,
 }
