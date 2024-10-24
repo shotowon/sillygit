@@ -17,6 +17,18 @@ pub enum ObjectKind {
     Tree,
 }
 
+impl ObjectKind {
+    fn from_str(object_type: &str) -> Result<Self, Box<dyn Error>> {
+        match object_type {
+            "blob" => Ok(ObjectKind::Blob),
+            "tree" => Ok(ObjectKind::Tree),
+            _ => Err(
+                Box::from(format!("cannot match object type: got {}", object_type))
+                ),
+        }
+    }
+}
+
 pub struct Object {
     pub kind: ObjectKind,
     size: usize,
