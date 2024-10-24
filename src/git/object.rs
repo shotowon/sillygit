@@ -127,7 +127,7 @@ impl Object {
 
         let dir = path.parent().ok_or("invalid path")?;
         if !dir.exists() {
-            fs::create_dir_all(dir);
+            fs::create_dir_all(dir)?;
         }
         
         let mut file = fs::File::create(path)?;
@@ -152,96 +152,3 @@ impl Object {
         format!("{:x}", result)
     }
 }
-
-pub enum ObjectFile {
-    Blob { header: String, content: String },
-}
-/*
-impl ObjectFile {
-    pub fn read(object: &str) -> Result<Self, Box<dyn Error>> {
-        let filepath = &format!(
-            "{}/objects/{}/{}",
-            REPO_DIRECTORY,
-            &object[..2],
-            &object[2..]
-        );
-
-        let file = Path::new(&filepath);
-        let file = fs::File::open(&file)?;
-        let contents = decode_from_file(&file)?;
-
-        if contents.starts_with("blob") {
-            let contents: Vec<&str> = contents.split('\0').collect();
-            let header = contents[0];
-            return Ok(ObjectFile::Blob {
-                header: header.to_string(),
-                content: contents[1].to_string(),
-            });
-        }
-
-        Err(Box::from("failed to identify object"))
-    }
-
-    pub fn blob_from_file(filepath: &str) -> Result<Self, Box<dyn Error>> {
-        let filepath = Path::new(filepath);
-        let mut file = fs::File::open(filepath)?;
-        let metadata = file.metadata()?;
-        if !metadata.is_file() {
-            return Err(Box::from("not a file"));
-        }
-
-        let size = metadata.len();
-        let mut content = String::new();
-        file.read_to_string(&mut content)?;
-
-        Ok(ObjectFile::Blob {
-            header: format!("blob {}", size),
-            content,
-        })
-    }
-
-    pub fn as_compressed_bytes(&self) -> Result<Vec<u8>, Box<dyn Error>> {
-        if let ObjectFile::Blob { header, content } = self {
-            let content_to_compress = format!("{}\0{}", header, content);
-            let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
-
-            e.write_all(content_to_compress.as_bytes())?;
-            let compressed = e.finish()?.to_vec();
-            return Ok(compressed);
-        }
-
-        Err(Box::from("Object is not a blob"))
-    }
-
-    pub fn blob_as_hex_hash(&self) -> Result<String, Box<dyn Error>> {
-        if let ObjectFile::Blob { header, content } = self {
-            let content_to_hash = format!("{}\0{}", header, content);
-            let mut hasher = Sha1::new();
-            hasher.update(content_to_hash.as_bytes());
-            let result = hasher.finalize();
-            return Ok(format!("{:x}", result));
-        }
-
-        Err(Box::from("Object is not a blob"))
-    }
-
-    pub fn hash_write(&self) -> Result<(), Box<dyn Error>> {
-        let hash = self.blob_as_hex_hash()?;
-        let content = self.as_compressed_bytes()?;
-
-        let folder_path = format!("./{}/objects/{}", REPO_DIRECTORY, &hash[..2]);
-
-        if !Path::new(&folder_path).exists() {
-            fs::create_dir_all(&folder_path)?;
-        }
-
-        let object_file_path = Path::new(&folder_path).join(&hash[2..]);
-        let mut file = fs::File::create(object_file_path)?;
-        file.write_all(&content[..])?;
-        println!("{}", hash);
-
-        Ok(())
-    }
-}
-
-*/
