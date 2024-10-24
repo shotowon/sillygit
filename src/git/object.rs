@@ -1,11 +1,14 @@
 use std::{
     io::prelude::*,
     fs,
-    path::Path,
+    path::{
+        Path,
+        PathBuf
+    },
     error::Error,
 };
 
-use flate2::write::ZlibEncoder;
+use flate2::{read::ZlibDecoder, write::ZlibEncoder};
 use flate2::Compression;
 use sha1::{Sha1, Digest};
 
@@ -40,6 +43,15 @@ pub struct Object {
 }
 
 impl Object {
+    pub fn from_sha(sha: &str) -> Result<Self, Box<dyn Error>> {
+        if sha.len() != 40 {
+            return Err(Box::from("error: invalid sha"));
+        }
+
+        let object_content = Self::decode_and_read(sha)?;
+        Self::parse_object(&object_content)
+    }
+
     fn parse_object(object_content: &str) -> Result<Self, Box<dyn Error>> {
         let null_pos = object_content.find('\0').ok_or("invalid object file content")?;
         let (header, content) = object_content.split_at(null_pos);
@@ -53,6 +65,7 @@ impl Object {
         
         Ok(Object { kind, size, content })
     }
+
     fn path_from_sha(sha: &str) -> Result<PathBuf, Box<dyn Error>> { 
         if sha.len() != 40 {
             return Err(Box::from("error: invalid sha"));
