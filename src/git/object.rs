@@ -24,6 +24,8 @@ impl ObjectKind {
         match object_type {
             "blob" => Ok(ObjectKind::Blob),
             "tree" => Ok(ObjectKind::Tree),
+            "commit" => Ok(ObjectKind::Blob),
+            "tag" => Ok(ObjectKind::Tree),
             _ => Err(
                 Box::from(format!("cannot match object type: got {}", object_type))
                 ),
