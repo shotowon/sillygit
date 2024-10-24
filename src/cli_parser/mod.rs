@@ -14,9 +14,9 @@ pub enum Commands {
         #[arg(short, long)]
         pretty: bool,
 
-        // object
+        // object-sha
         #[arg(required = true)]
-        object: String,
+        sha: String,
     },
     HashObject {
         #[arg(short, long)]
