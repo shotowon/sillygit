@@ -124,6 +124,14 @@ impl Object {
     fn to_object_content(&self) -> String {
         format!("{} {}\0{}", self.kind.to_str(), self.size, self.content)
     }
+
+    fn as_hex_hash(&self) -> String {
+        let content_to_hash = self.to_object_content();
+        let mut hasher = Sha1::new();
+        hasher.update(content_to_hash.as_bytes());
+        let result = hasher.finalize();
+        format!("{:x}", result)
+    }
 }
 
 pub enum ObjectFile {
