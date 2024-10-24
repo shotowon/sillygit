@@ -37,6 +37,22 @@ pub struct Object {
     content: String,
 }
 
+impl Object {
+    fn parse_object(object_content: &str) -> Result<Self, Box<dyn Error>> {
+        let null_pos = object_content.find('\0').ok_or("invalid object file content")?;
+        let (header, content) = object_content.split_at(null_pos);
+
+        let space_pos = header.find(' ').ok_or("invalid object file content")?;
+        let (object_type, size) = header.split_at(space_pos);
+
+        let size: usize = size.parse()?;
+        let kind = ObjectKind::from_str(object_type)?;
+        let content = content.to_string();
+        
+        Ok(Object { kind, size, content })
+    }
+}
+
 pub enum ObjectFile {
     Blob {
         header: String,
