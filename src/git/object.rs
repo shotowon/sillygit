@@ -69,6 +69,16 @@ impl Object {
                 );
         Ok(path)
     }
+
+    fn decode_and_read(sha: &str) -> Result<String, Box<dyn Error>> {
+        let path = Self::path_from_sha(sha)?;
+        let file = fs::File::open(path.as_path())?;
+        let mut d = ZlibDecoder::new(file);
+        
+        let mut buf = String::new();
+        d.read_to_string(&mut buf)?;
+        Ok(buf)
+    }
 }
 
 pub enum ObjectFile {
