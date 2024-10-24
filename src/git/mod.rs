@@ -2,6 +2,7 @@ use crate::cli_parser::{Query, Commands};
 
 use std::error::Error;
 
+const REPO_DIRECTORY: &'static str = ".sillygit";
 mod lib;
 mod common;
 mod consts;

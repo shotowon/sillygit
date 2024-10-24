@@ -9,7 +9,7 @@ use flate2::Compression;
 use flate2::{read::ZlibDecoder, write::ZlibEncoder};
 use sha1::{Digest, Sha1};
 
-use crate::git::consts::REPO_DIRECTORY;
+use crate::git::REPO_DIRECTORY;
 
 pub enum ObjectKind {
     Blob,
