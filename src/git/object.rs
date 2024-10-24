@@ -15,6 +15,8 @@ use crate::git::common::decode_from_file;
 pub enum ObjectKind {
     Blob,
     Tree,
+    Commit,
+    Tag,
 }
 
 impl ObjectKind {
