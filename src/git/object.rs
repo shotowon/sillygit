@@ -52,6 +52,19 @@ pub struct Object {
 }
 
 impl Object {
+    pub fn from_file(filepath: impl AsRef<Path>) -> Result<Self, Box<dyn Error>> {
+        let mut file = fs::File::open(filepath)?;
+        let metadata = file.metadata()?;
+        let mut content = String::new();
+
+        file.read_to_string(&mut content)?;
+        let size = metadata.len();
+        
+        Ok(
+            Object { kind: ObjectKind::Blob, size, content }
+        )
+    }
+
     pub fn from_sha(sha: &str) -> Result<Self, Box<dyn Error>> {
         if sha.len() != 40 {
             return Err(Box::from("error: invalid sha"));
