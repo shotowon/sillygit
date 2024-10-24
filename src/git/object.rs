@@ -92,6 +92,10 @@ impl Object {
         d.read_to_string(&mut buf)?;
         Ok(buf)
     }
+
+    pub fn content<'a>(&'a self) -> &'a str {
+        &self.content
+    }
 }
 
 pub enum ObjectFile {
