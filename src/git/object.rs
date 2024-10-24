@@ -34,6 +34,15 @@ impl ObjectKind {
                 ),
         }
     }
+
+    fn to_str<'a>(&'a self) -> &'a str {
+        match self {
+           ObjectKind::Blob => "blob",
+           ObjectKind::Tree => "tree",
+           ObjectKind::Commit => "commit",
+           ObjectKind::Tag => "tag",
+        }
+    }
 }
 
 pub struct Object {
